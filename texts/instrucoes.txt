@@ -1,0 +1,45 @@
+**Assunto:** Medidas Recomendadas para Otimização do Amazon DocumentDB
+
+Com base em nossa análise recente do desempenho do nosso Amazon DocumentDB, identificamos uma série de áreas que requerem atenção, especialmente relacionadas ao uso extensivo de índices em nossa collection com uma contagem significativa de registros.
+
+Aqui estão as ações recomendadas para garantir que nosso banco de dados seja otimizado e funcione de maneira eficiente:
+
+1. **Revisão de Índices**:
+   - Por favor, revisem as consultas frequentemente usadas e usem o comando `explain()` para verificar como os índices estão sendo utilizados.
+   - Identifiquem índices que são raramente ou nunca usados, ou que possam ser redundantes, e considerem sua remoção.
+   
+2. **Monitoramento**:
+   - Usem o Amazon CloudWatch para rastrear métricas críticas, como CPU, IOPS e latência.
+   - Se ainda não estiver configurado, implementem alertas para situações em que os limites aceitáveis são ultrapassados.
+
+3. **Dimensionamento**:
+   - Se os recursos estiverem consistentemente estressados, considerem migrar para uma instância DocumentDB maior.
+   - Para otimizar a capacidade de leitura, avaliem a possibilidade de adicionar mais réplicas.
+
+4. **Otimização de Consultas**:
+   - Revisem as consultas com desempenho insatisfatório ou alto consumo de recursos e otimizem-nas.
+   - Limitar campos retornados e garantir que consultas intensivas estejam usando índices são práticas recomendadas.
+
+5. **Manutenção Regular**:
+   - Agendem períodos regulares para revisar o desempenho do banco de dados e fazer qualquer otimização necessária.
+
+6. **Documentação**:
+   - Documentem todas as mudanças feitas nos índices e consultas para manter um registro e para futura referência.
+   
+7. **Testes**:
+   - Antes de implementar mudanças significativas no ambiente de produção, testem em um ambiente de desenvolvimento ou teste.
+
+8. **Comunicação**:
+   - Mantenham a equipe informada sobre mudanças planejadas e resultados observados após as otimizações.
+
+*. **Reavaliação de Operações de Update**:
+
+    - Também foi observado que, em certas operações de update, todos os campos dos documentos estão sendo atualizados, mesmo que apenas um deles realmente mude. Este comportamento não é apenas ineficiente, mas também pode levar a um uso desnecessário de recursos e possivelmente a um aumento nos custos.
+
+    Recomenda-se:
+
+    Revisem as operações de atualização em sua aplicação para garantir que apenas os campos que são modificados sejam incluídos na operação de update.
+    Utilizem as funcionalidades de update do DocumentDB (como $set, $unset etc.) de forma eficiente para garantir que apenas as alterações necessárias sejam feitas.
+    Testem e monitorem o impacto dessas mudanças em termos de desempenho e utilização de recursos. Esse ajuste pode resultar em uma melhoria significativa na eficiência das operações de update.
+
+
