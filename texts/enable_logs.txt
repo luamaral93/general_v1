@@ -1,0 +1,94 @@
+Para habilitar logs mais detalhados em um cluster Amazon DocumentDB, você precisa ativar os logs de auditoria e, se desejar, modificar o nível de profile do seu cluster. Aqui estão os passos para fazê-lo:
+
+1. **Habilitar Logs de Auditoria:**
+
+   a. Acesse o **Amazon RDS Console** e navegue até a seção DocumentDB.
+
+   b. Selecione o nome do seu cluster DocumentDB.
+
+   c. Na aba **Configuration**, procure pela opção **Parameter Group** associada ao seu cluster.
+
+   d. Clique no nome do grupo de parâmetros para editá-lo.
+
+   e. Modifique o parâmetro `audit_logs` e defina seu valor como `ENABLED`.
+
+   f. Salve as alterações.
+
+   Após fazer isso, você começará a receber logs de auditoria que registram diferentes atividades e operações em seu cluster.
+
+2. **Modificar o Nível de Profiling**:
+
+   a. Ainda na página de edição do **Parameter Group**, procure pelo parâmetro `profiling`.
+
+   b. Modifique o valor desse parâmetro para o nível desejado:
+   
+      - `0`: Desligado (padrão)
+      - `1`: Mostra operações lentas (aquelas que excedem o valor em `slowms`).
+      - `2`: Mostra todas as operações.
+      
+   c. Salve as alterações.
+
+3. **Reiniciar o Cluster**:
+
+   Após fazer as alterações no grupo de parâmetros, é provável que você precise reiniciar seu cluster para que as mudanças tenham efeito. Certifique-se de fazer isso em uma janela de manutenção adequada, para evitar impactos indesejados.
+
+4. **Monitoramento**:
+
+   Depois de habilitar essas opções, você pode começar a monitorar os logs usando o **Amazon CloudWatch Logs**. Todos os logs de auditoria e profiling serão enviados para lá, e você poderá fazer consultas e análises para obter insights sobre o comportamento do seu cluster.
+
+Por fim, é sempre uma boa prática monitorar o armazenamento adicional que esses logs podem consumir e gerenciar ou arquivar os logs conforme necessário para evitar custos adicionais.
+
+
+----------------
+
+
+Peço desculpas pela inconveniência. As discrepâncias entre as métricas `OpcountersInsert` e `DocumentsInserted` podem não resultar diretamente em mensagens de erro nos Audit Logs, especialmente se as operações não falharam de forma explícita. Em vez disso, pode ser uma característica das operações que estão ocorrendo.
+
+Dito isso, sugiro algumas etapas para identificar o problema:
+
+1. **Detalhamento de Logs**:
+   Certifique-se de que seu cluster DocumentDB está configurado para gravar logs detalhados. A configuração padrão pode não incluir todos os níveis de detalhe que você precisa.
+
+2. **Logs Profiling**:
+   Ative o profiling de logs para registrar operações lentas ou que excedam um limite específico. Isso pode ajudar a identificar se há operações que estão levando mais tempo do que o esperado ou que estão sendo refeitas.
+
+3. **Revisão de Métricas**:
+   Examine outras métricas no CloudWatch que possam fornecer insights sobre o que está acontecendo. Por exemplo, se há um aumento nos erros de rede ou retransmissões, isso pode indicar problemas de conectividade que afetam as operações de inserção.
+
+4. **Análise de Aplicação**:
+   Revise o código da aplicação para identificar como as inserções estão sendo feitas. Por exemplo, a aplicação pode estar tentando inserir documentos que já existem (e sendo ignorados), ou pode haver operações de inserção em lote que estão sendo divididas e processadas de maneira diferente.
+
+5. **Contato com o Suporte AWS**:
+   Se você ainda não conseguir identificar a causa da discrepância, pode ser útil entrar em contato com o suporte da AWS. Eles podem fornecer insights adicionais ou ferramentas de diagnóstico para ajudar a resolver o problema.
+
+Embora o CloudWatch Logs Insights seja uma ferramenta poderosa, a natureza específica das métricas e a forma como o DocumentDB as registra podem não ser diretamente refletidas nas mensagens de log padrão. Portanto, uma abordagem holística, examinando tanto os logs quanto as métricas em conjunto e revisando a configuração e o comportamento da aplicação, é frequentemente a melhor maneira de identificar e resolver esse tipo de problema.
+
+
+---------------------------
+
+
+Para identificar operações bem-sucedidas e falhas nos logs do Amazon DocumentDB, você normalmente examinaria os logs de atividades do sistema e/ou logs de auditoria. No entanto, lembre-se de que, para obter informações detalhadas sobre operações específicas, é necessário ter a auditoria e o nível apropriado de detalhamento dos logs habilitados.
+
+Aqui estão algumas dicas sobre como interpretar os logs:
+
+Logs de Auditoria:
+
+Ao configurar o log de auditoria, o DocumentDB registra várias atividades, incluindo operações bem-sucedidas e falhas.
+Operações que resultam em erro geralmente incluem mensagens específicas sobre a natureza do erro.
+Busque por palavras-chave como "error", "fail", "exception" ou códigos de erro específicos.
+Logs de Atividades do Sistema:
+
+Estes logs fornecem informações sobre as operações do servidor, como inicializações, conexões e erros.
+Mensagens que contêm a palavra "ERROR" geralmente indicam problemas.
+CloudWatch Logs:
+
+Se você integrou seus logs do DocumentDB com o Amazon CloudWatch Logs, pode usar as ferramentas de pesquisa e filtragem do CloudWatch para identificar erros.
+Utilize consultas específicas para filtrar mensagens de erro ou eventos bem-sucedidos.
+Interpretação:
+
+Operações bem-sucedidas geralmente não contêm mensagens de erro e são registradas como eventos normais.
+Operações com falha, especialmente aquelas relacionadas a restrições, como índices únicos, geralmente contêm mensagens descritivas indicando a natureza da falha.
+Logs Insights:
+
+Se você estiver usando o CloudWatch Logs Insights para analisar seus logs, pode escrever consultas específicas para filtrar e analisar os dados dos logs. Por exemplo, você pode procurar por mensagens de erro específicas ou padrões que indicam falhas.
+Para uma análise mais precisa e específica, é vital que você conheça o formato exato dos logs gerados pelas suas configurações e versão específicas do DocumentDB. Além disso, sempre é uma boa prática monitorar proativamente os logs e configurar alertas para notificá-lo de eventos críticos ou falhas.
